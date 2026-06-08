@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scenario 1: The Job Opportunity</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #F8F9FB;
+            --surface: #FFFFFF;
+            --text: #1E293B;
+            --muted: #64748B;
+            --accent: #2563EB;
+            --accent-lt: #EFF6FF;
+            --safe: #16A34A;
+            --safe-lt: #DCFCE7;
+            --warning: #D97706;
+            --warning-lt: #FEF3C7;
+            --danger: #DC2626;
+            --danger-lt: #FEE2E2;
+            --radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        /* PROGRESS BAR */
+        .progress-bar-wrap {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--surface);
+            border-bottom: 1px solid #E2E8F0;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 6px;
+            background: #E2E8F0;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 99px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-count {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            white-space: nowrap;
+        }
+
+        /* SLIDES */
+        .slide {
+            display: none;
+            min-height: calc(100vh - 53px);
+            padding: 32px 20px 48px;
+            max-width: 680px;
+            margin: 0 auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .slide.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* SCENARIO BADGE */
+        .scenario-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent-lt);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 12px;
+            border-radius: 99px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        h3 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        p { margin-bottom: 14px; font-size: 15px; }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--muted);
+            margin-bottom: 28px;
+        }
+
+        /* OBJECTIVES */
+        .obj-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+
+        .obj-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 15px;
+            background: var(--surface);
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .obj-list li .check {
+            color: var(--safe);
+            font-weight: 800;
+            font-size: 16px;
+            margin-top: 1px;
+        }
+
+        /* CONTEXT BOX */
+        .context-box {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 28px;
+            border-left: 4px solid var(--accent);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+        }
+
+        /* TIMELINE */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .tl-row {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .tl-marker {
+            min-width: 70px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: var(--muted);
+            padding-top: 14px;
+        }
+
+        .tl-block {
+            flex: 1;
+            border-radius: 8px;
+            padding: 14px 16px;
+            border-left: 4px solid;
+            font-size: 14px;
+        }
+
+        .tl-block.s1 { border-color: #9CA3AF; background: #F3F4F6; }
+        .tl-block.s2 { border-color: var(--warning); background: var(--warning-lt); }
+        .tl-block.s3 { border-color: #F97316; background: #FFEDD5; }
+        .tl-block.s4 { border-color: var(--danger); background: var(--danger-lt); }
+
+        .tl-block strong { display: block; margin-bottom: 4px; font-size: 13px; }
+
+        /* CHAT */
+        .chat-window {
+            background: #F1F5F9;
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .chat-msg {
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+        .chat-msg.them { justify-content: flex-start; }
+        .chat-msg.me { justify-content: flex-end; }
+
+        .bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .chat-msg.them .bubble {
+            background: #DBEAFE;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-msg.me .bubble {
+            background: #E2E8F0;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-time {
+            text-align: center;
+            font-size: 11px;
+            color: var(--muted);
+            margin: 10px 0;
+        }
+
+        /* RED FLAG */
+        .red-flag {
+            background: var(--danger-lt);
+            border-left: 4px solid var(--danger);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+
+        .red-flag .rf-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--danger);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .red-flag p { font-size: 14px; margin-bottom: 8px; }
+
+        .rf-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .rf-list li {
+            font-size: 14px;
+            padding: 5px 0 5px 18px;
+            position: relative;
+            color: var(--text);
+        }
+
+        .rf-list li:before {
+            content: "•";
+            position: absolute;
+            left: 6px;
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        /* DECISION */
+        .decision-prompt {
+            background: var(--accent-lt);
+            border-left: 4px solid var(--accent);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .choice-btn {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 2px solid #E2E8F0;
+            background: var(--surface);
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .choice-btn:hover:not(:disabled) {
+            border-color: var(--accent);
+            background: var(--accent-lt);
+            transform: translateY(-1px);
+        }
+
+        .choice-btn:disabled { cursor: default; }
+
+        .choice-btn.selected-danger {
+            border-color: var(--danger);
+            background: var(--danger-lt);
+        }
+
+        .choice-btn.selected-warning {
+            border-color: var(--warning);
+            background: var(--warning-lt);
+        }
+
+        .choice-btn.selected-safe {
+            border-color: var(--safe);
+            background: var(--safe-lt);
+        }
+
+        .choice-btn.dimmed {
+            opacity: 0.4;
+        }
+
+        .choice-icon {
+            font-size: 22px;
+            min-width: 30px;
+        }
+
+        /* OUTCOME PANEL */
+        .outcome-panel {
+            display: none;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .outcome-panel.show { display: block; }
+
+        .outcome-panel.danger {
+            background: var(--danger-lt);
+            border-left: 4px solid var(--danger);
+        }
+
+        .outcome-panel.warning {
+            background: var(--warning-lt);
+            border-left: 4px solid var(--warning);
+        }
+
+        .outcome-panel.safe {
+            background: var(--safe-lt);
+            border-left: 4px solid var(--safe);
+        }
+
+        .outcome-panel .outcome-title {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .outcome-panel.danger .outcome-title { color: var(--danger); }
+        .outcome-panel.warning .outcome-title { color: var(--warning); }
+        .outcome-panel.safe .outcome-title { color: var(--safe); }
+
+        .outcome-panel p { font-size: 14px; margin-bottom: 0; }
+
+        /* TAKEAWAYS */
+        .takeaway-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .takeaway-card {
+            background: var(--surface);
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+        }
+
+        .takeaway-card h3 { margin-bottom: 10px; }
+
+        .tk-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tk-list li {
+            display: flex;
+            gap: 10px;
+            font-size: 14px;
+            padding: 8px 10px;
+            background: #F8F9FB;
+            border-radius: 6px;
+        }
+
+        .tk-list .icon { font-size: 16px; min-width: 22px; }
+
+        /* RESOURCES */
+        .resources-block {
+            background: linear-gradient(135deg, #2563EB, #1E40AF);
+            border-radius: var(--radius);
+            padding: 28px 20px;
+            color: white;
+            margin-bottom: 28px;
+        }
+
+        .resources-block h2 { color: white; margin-bottom: 16px; }
+
+        .res-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .res-item {
+            background: rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 14px;
+        }
+
+        .res-item strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        /* KNOWLEDGE CHECK */
+        .kc-wrap {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+        }
+
+        .kc-badge {
+            display: inline-block;
+            background: #7C3AED;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 99px;
+            margin-bottom: 14px;
+        }
+
+        .kc-question {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .kc-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .kc-option {
+            width: 100%;
+            padding: 13px 16px;
+            border-radius: 8px;
+            border: 2px solid #E2E8F0;
+            background: var(--bg);
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text);
+            transition: all 0.18s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .kc-option:hover:not(:disabled) {
+            border-color: #7C3AED;
+            background: #F5F3FF;
+        }
+
+        .kc-option:disabled { cursor: default; }
+
+        .kc-option.correct {
+            border-color: var(--safe);
+            background: var(--safe-lt);
+            color: #14532D;
+        }
+
+        .kc-option.incorrect {
+            border-color: var(--danger);
+            background: var(--danger-lt);
+            color: #7F1D1D;
+        }
+
+        .kc-feedback {
+            display: none;
+            font-size: 14px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .kc-feedback.show { display: block; }
+        .kc-feedback.correct { background: var(--safe-lt); color: #14532D; border-left: 3px solid var(--safe); }
+        .kc-feedback.incorrect { background: var(--danger-lt); color: #7F1D1D; border-left: 3px solid var(--danger); }
+
+        .kc-retry {
+            display: none;
+            margin-top: 10px;
+            padding: 9px 18px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .kc-retry.show { display: inline-block; }
+        .kc-retry:hover { background: #B91C1C; }
+
+        /* COMPLETION */
+        .completion-screen {
+            text-align: center;
+            padding: 48px 20px;
+        }
+
+        .completion-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .completion-screen h1 {
+            font-size: 26px;
+            margin-bottom: 12px;
+        }
+
+        .completion-screen p {
+            color: var(--muted);
+            font-size: 15px;
+            max-width: 400px;
+            margin: 0 auto 28px;
+        }
+
+        /* NAV BUTTONS */
+        .nav-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            gap: 12px;
+        }
+
+        .btn-next {
+            padding: 14px 28px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-left: auto;
+        }
+
+        .btn-next:hover { background: #1D4ED8; transform: translateY(-1px); }
+        .btn-next:disabled { background: #94A3B8; cursor: not-allowed; transform: none; }
+
+        .btn-back {
+            padding: 14px 20px;
+            background: transparent;
+            color: var(--muted);
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+
+        .highlight-box {
+            background: var(--warning-lt);
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 14px;
+            margin: 12px 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrap">
+    <span class="progress-label">Scenario 1</span>
+    <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <span class="progress-count" id="progressCount">1 / 9</span>
+</div>
+
+<!-- ============ SLIDE 1: TITLE ============ -->
+<div class="slide active" id="slide-1">
+    <div class="scenario-badge">📱 Scenario 1 of 4</div>
+    <h1>The Job Opportunity</h1>
+    <p class="subtitle">Learn to spot online job scams before they go too far.</p>
+
+    <div style="background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:28px;box-shadow:0 1px 4px rgba(0,0,0,.07)">
+        <h3>By the end of this scenario, you will be able to:</h3>
+        <ul class="obj-list" style="margin-bottom:0">
+            <li><span class="check">✓</span> Spot when photo requests are a red flag</li>
+            <li><span class="check">✓</span> Know when to ask a trusted adult for help</li>
+            <li><span class="check">✓</span> Name one thing you can do to stay safe</li>
+        </ul>
+    </div>
+
+    <div class="nav-row">
+        <button class="btn-next" onclick="goTo(2)">Start →</button>
+    </div>
+</div>
+
+<!-- ============ SLIDE 2: SITUATION ============ -->
+<div class="slide" id="slide-2">
+    <div class="scenario-badge">📖 The Situation</div>
+    <h2>Meet Alex</h2>
+
+    <div class="context-box">
+        <p>Alex is 17 and has been staying at a drop-in center for three weeks. Their phone plan is about to run out. While scrolling through social media, Alex sees a post:</p>
+        <p style="font-size:16px;font-weight:700;color:var(--accent);margin-bottom:0">"Brand Ambassador — $100/day, easy work from home. DM for details!"</p>
+    </div>
+
+    <p>Alex needs money. This looks like a way to get it fast. Alex sends a message.</p>
+    <p><strong>But things are not what they seem.</strong></p>
+
+    <div class="nav-row">
+        <button class="btn-back" onclick="goTo(1)">← Back</button>
+        <button class="btn-next" onclick="goTo(3)">See what happens →</button>
+    </div>
+</div>
+
+<!-- ============ SLIDE 3: TIMELINE ============ -->
+<div class="slide" id="slide-3">
+    <div class="scenario-badge">⚠️ How It Escalates</div>
+    <h2>How This Kind of Scam Works</h2>
+    <p style="color:var(--muted);margin-bottom:20px">These scams move fast. Here is what the pattern usually looks like:</p>
+
+    <div class="timeline">
+        <div class="tl-row">
+            <div class="tl-marker">Days 1–2</div>
+            <div class="tl-block s1">
+                <strong>💬 First Contact</strong>
+                "We need photos to verify you — headshot and full body."
+            </div>
+        </div>
+        <div class="tl-row">
+            <div class="tl-marker">Days 3–4</div>
+            <div class="tl-block s2">
+                <strong>📸 More Photos</strong>
+                "Now we need lifestyle shots — gym selfies, mirror photos."
+            </div>
+        </div>
+        <div class="tl-row">
+            <div class="tl-marker">Days 4–5</div>
+            <div class="tl-block s3">
+                <strong>⚠️ Pressure Language</strong>
+                "Prove you're serious." / "These are for internal use only."
+            </div>
+        </div>
+        <div class="tl-row">
+            <div class="tl-marker">Day 6+</div>
+            <div class="tl-block s4">
+                <strong>🔒 Blackmail</strong>
+                "Send money or I share these photos with everyone."
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-row">
+        <button class="btn-back" onclick="goTo(2)">← Back</button>
+        <button class="btn-next" onclick="goTo(4)">See the conversation →</button>
+    </div>
+</div>
+
+<!-- ============ SLIDE 4: SCENE 1 ============ -->
+<div class="slide" id="slide-4">
+    <div class="scenario-badge">💬 Days 1–2</div>
+    <h2>The First Messages</h2>
+
+    <div class="chat-window">
+        <div class="chat-msg them"><div class="bubble">Hi Alex! Thanks for reaching out. We work with lifestyle brands and pay people to post content. Can I ask a few questions?</div></div>
+        <div class="chat-time">11:32 AM</div>
+        <div class="chat-msg me"><div class="bubble">Sure. What kind of work is it?</div></div>
+        <div class="chat-time">11:35 AM</div>
+        <div class="chat-msg them"><div class="bubble">Fitness, tech, and fashion brands. You post content and engage with followers. $100 per post. Interested?</div></div>
+        <div class="chat-msg me"><div class="bubble">Yeah, for sure. What do I need to do?</div></div>
+        <div class="chat-time">11:40 AM</div>
+        <div class="chat-msg them"><div class="bubble">First, we need verification photos — a headshot and a full-body photo. Just to confirm your identity.</div></div>
+    </div>
+
+    <div class="red-flag">
+        <div class="rf-title">🚩 Red Flag #1 — This Is Moving Fast</div>
+        <p><strong>A real job does not ask for photos before:</strong></p>
+        <ul class="rf-list">
+            <li>Telling you the contract details</li>
+            <li>Explaining how you get paid</li>
+            <li>Giving you a company name you can look up</li>
+        </ul>
+        <p style="margin-top:10px;margin-bottom:0">The professional language sounds real. But the request is not normal.</p>
+    </div>
+
+    <div class="nav-row">
+        <button class="btn-back" onclick="goTo(3)">← Back</button>
+        <button class="btn-next" onclick="goTo(5)">See what happens next →</button>
+    </div>
+</div>
+
+<!-- ============ SLIDE 5: SCENE 2 ============ -->
+<div class="slide" id="slide-5">
+    <div class="scenario-badge">💬 Days 3–4</div>
+    <h2>The Requests Get Bigger</h2>
+
+    <div class="chat-window">
+        <div class="chat-msg me"><div class="bubble">I can send photos. What should I wear?</div></div>
+        <div class="chat-msg them"><div class="bubble">Just something casual! Natural is best.</div></div>
+        <div class="chat-time">Next day</div>
+        <div class="chat-msg them"><div class="bubble">Great photos! Now we need lifestyle shots to set you apart — gym selfies, mirror photos in casual clothes. These are for our internal portfolio only. This shows us you are serious about the job.</div></div>
+    </div>
+
+    <div class="red-flag">
+        <div class="rf-title">🚩 Red Flag #2 — Notice the Change</div>
+        <p><strong>The requests keep getting more specific:</strong></p>
+        <ul class="rf-list">
+            <li>Casual photos → gym photos → mirror selfies</li>
+            <li>"Prove you're serious" is pressure language, not a job requirement</li>
+            <li>"Internal use only" is meant to stop you from questioning it</li>
+        </ul>
+        <div class="highlight-box" style="margin-top:12px">
+            <strong>This is a grooming tactic.</strong> The next ask will be for more revealing photos. Real employers do not work this way.
+        </div>
+    </div>
+
+    <div class="nav-row">
+        <button class="btn-back" onclick="goTo(4)">← Back</button>
+        <button class="btn-next" onclick="goTo(6)">What should Alex do? →</button>
+    </div>
+</div>
+
+<!-- ============ SLIDE 6: DECISION ============ -->
+<div class="slide" id="slide-6">
+    <div class="scenario-badge">🤔 Your Choice</div>
+    <h2>What Should Alex Do?</h2>
+
+    <div class="decision-prompt">
+        Alex wants the money. But something feels off. What is the right move?
+    </div>
+
+    <div class="choices" id="choices-s1">
+        <button class="choice-btn" onclick="makeChoice('danger', 0)" id="choice-0">
+            <span class="choice-icon">❌</span>
+            <span>Send the photos to keep the job going</span>
+        </button>
+        <button class="choice-btn" onclick="makeChoice('warning', 1)" id="choice-1">
+            <span class="choice-icon">⚠️</span>
+            <span>Block the account and move on</span>
+        </button>
+        <button class="choice-btn" onclick="makeChoice('safe', 2)" id="choice-2">
+            <span class="choice-icon">✅</span>
+            <span>Show the messages to a case manager or trusted adult</span>
+        </button>
+    </div>
+
+    <div class="outcome-panel danger" id="outcome-danger">
+        <div class="outcome-title">⚠️ This leads to a trap</div>
+        <p>Once Alex sends more photos, the scammer has what they need to make threats. The "job" disappears and the blackmail begins. Sending photos does not get you the job — it gives them power over you.</p>
+    </div>
+
+    <div class="outcome-panel warning" id="outcome-warning">
+        <div class="outcome-title">⚠️ Some protection — but not enough</div>
+        <p>Blocking stops this person from contacting you. But you are still alone with what happened. A trusted adult can help you report it and make sure you are safe going forward.</p>
+    </div>
+
+    <div class="outcome-panel safe" id="outcome-safe">
+        <div class="outcome-title">✅ Safe and supported</div>
+        <p>Alex's case manager recognizes the pattern right away. They help block the account, report it, and connect Alex to real job opportunities. Asking for help was the right call.</p>
+    </div>
+
+    <div class="nav-row">
+        <button class="btn-back" onclick="goTo(5)">← Back</button>
+        <button class="btn-next" id="btn-next-6" onclick="goTo(7)" disabled>See key takeaways →</button>
+    </div>
+</div>
+
+<!-- ============ SLIDE 7: TAKEAWAYS ============ -->
+<div class="slide" id="slide-7">
+    <div class="scenario-badge">💡 Key Takeaways</div>
+    <h2>What to Remember</h2>
+
+    <div class="takeaway-grid">
+        <div class="takeaway-card">
+            <h3>🚩 Red Flags to Watch For</h3>
+            <ul class="tk-list">
+                <li><span class="icon">📸</span>Photo requests that keep getting more specific</li>
+                <li><span class="icon">❓</span>Vague job description with no company name</li>
+                <li><span class="icon">💬</span>"Prove you're serious" or "internal use only"</li>
+                <li><span class="icon">🔒</span>Pressure to keep the conversation private</li>
+            </ul>
+        </div>
+
+        <div class="takeaway-card">
+            <h3>✅ What You Can Do</h3>
+            <ul class="tk-list">
+                <li><span class="icon">👤</span>Tell a case manager, counselor, or shelter staff</li>
+                <li><span class="icon">🔍</span>Search the account name online to check for warnings</li>
+                <li><span class="icon">❌</span>Block the account and stop responding</li>
+                <li><span class="icon">📋</span>Take screenshots before you block</li>
+            </ul>
+        </div>
+
+        <div class="takeaway-card">
+            <h3>💭 Remember This</h3>
+            <ul class="tk-list">
+                <li><span class="icon">⚡</span>Needing money is real. Scammers know this and use it.</li>
+                <li><span class="icon">🛡️</span>Asking for help is a strong move, not a weak one.</li>
+                <li><span class="icon">❤️</span>Your case manager has seen this before. They will not judge you.</li>
+                <li><span class="icon">🎯</span>Real, safe jobs exist. Staff can help you find them.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="nav-row">
+        <button class="btn-back" onclick="goTo(6)">← Back</button>
+        <button class="btn-next" onclick="goTo(8)">Check your understanding →</button>
+    </div>
+</div>
+
+<!-- ============ SLIDE 8: KNOWLEDGE CHECK ============ -->
+<div class="slide" id="slide-8">
+    <div class="scenario-badge">✏️ Knowledge Check</div>
+    <h2>Check Your Understanding</h2>
+    <p style="color:var(--muted);margin-bottom:24px">Answer both questions correctly to continue. You can retry if you get one wrong.</p>
+
+    <!-- Q1 -->
+    <div class="kc-wrap">
+        <div class="kc-badge">Question 1 of 2 — Multiple Choice</div>
+        <div class="kc-question">A stranger online offers you a $100/day job and asks for a headshot and full-body photo as "verification." What is the most important warning sign?</div>
+        <div class="kc-options" id="kc1-options">
+            <button class="kc-option" onclick="checkAnswer(1, this, false)">A. The pay sounds too high</button>
+            <button class="kc-option" onclick="checkAnswer(1, this, false)">B. The job is work-from-home</button>
+            <button class="kc-option" onclick="checkAnswer(1, this, true)">C. They ask for photos before any job details or contract</button>
+            <button class="kc-option" onclick="checkAnswer(1, this, false)">D. They contacted you first</button>
+        </div>
+        <div class="kc-feedback" id="kc1-feedback"></div>
+        <button class="kc-retry" id="kc1-retry" onclick="retryQuestion(1)">Try again</button>
+    </div>
+
+    <!-- Q2 -->
+    <div class="kc-wrap" id="kc2-wrap" style="opacity:0.4;pointer-events:none">
+        <div class="kc-badge">Question 2 of 2 — True or False</div>
+        <div class="kc-question">True or False: If someone is threatening to share your photos, paying them will make them stop.</div>
+        <div class="kc-options" id="kc2-options">
+            <button class="kc-option" onclick="checkAnswer(2, this, false)">True</button>
+            <button class="kc-option" onclick="checkAnswer(2, this, true)">False</button>
+        </div>
+        <div class="kc-feedback" id="kc2-feedback"></div>
+        <button class="kc-retry" id="kc2-retry" onclick="retryQuestion(2)">Try again</button>
+    </div>
+
+    <div class="nav-row">
+        <button class="btn-back" onclick="goTo(7)">← Back</button>
+        <button class="btn-next" id="btn-next-8" onclick="goTo(9)" disabled>See resources →</button>
+    </div>
+</div>
+
+<!-- ============ SLIDE 9: RESOURCES ============ -->
+<div class="slide" id="slide-9">
+    <div class="scenario-badge">📞 Get Help</div>
+    <h2>What to Do Right Now</h2>
+
+    <div class="resources-block">
+        <h2>If something like this happens to you:</h2>
+        <div class="res-grid">
+            <div class="res-item">
+                <strong>👤 Tell Someone You Trust</strong>
+                Talk to your case manager, counselor, or shelter staff right away.
+            </div>
+            <div class="res-item">
+                <strong>📞 Report It</strong>
+                CyberTipline: cybertipline.org or call 1-800-843-5678
+            </div>
+            <div class="res-item">
+                <strong>💬 Crisis Text Line</strong>
+                Text HOME to 741741 — free, 24/7, confidential
+            </div>
+        </div>
+    </div>
+
+    <div class="completion-screen" style="padding:28px 0 0">
+        <div class="completion-icon">🎉</div>
+        <h1>Scenario 1 Complete!</h1>
+        <p>You finished "The Job Opportunity." You can now recognize photo escalation scams and know what steps to take to stay safe.</p>
+    </div>
+
+    <div class="nav-row" style="justify-content:center">
+        <button class="btn-next" onclick="restartScenario()">Restart Scenario</button>
+    </div>
+</div>
+
+<script>
+    const TOTAL_SLIDES = 9;
+    let currentSlide = 1;
+    let kc1Done = false;
+    let kc2Done = false;
+
+    function goTo(n) {
+        document.getElementById('slide-' + currentSlide).classList.remove('active');
+        currentSlide = n;
+        document.getElementById('slide-' + n).classList.add('active');
+        window.scrollTo(0, 0);
+        updateProgress();
+    }
+
+    function updateProgress() {
+        const pct = ((currentSlide - 1) / (TOTAL_SLIDES - 1)) * 100;
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('progressCount').textContent = currentSlide + ' / ' + TOTAL_SLIDES;
+    }
+
+    // Decision
+    let choiceMade = false;
+    function makeChoice(type, idx) {
+        if (choiceMade) return;
+        choiceMade = true;
+
+        const btns = document.querySelectorAll('.choice-btn');
+        btns.forEach((b, i) => {
+            b.disabled = true;
+            if (i !== idx) b.classList.add('dimmed');
+        });
+
+        btns[idx].classList.add('selected-' + type);
+
+        document.getElementById('outcome-' + type).classList.add('show');
+        document.getElementById('btn-next-6').disabled = false;
+    }
+
+    // Knowledge Check
+    function checkAnswer(qNum, btn, isCorrect) {
+        const options = document.querySelectorAll('#kc' + qNum + '-options .kc-option');
+        options.forEach(o => o.disabled = true);
+
+        const feedback = document.getElementById('kc' + qNum + '-feedback');
+        const retry = document.getElementById('kc' + qNum + '-retry');
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            feedback.textContent = qNum === 1
+                ? '✅ Correct! A real employer never asks for photos before giving you contract details or a way to verify the company.'
+                : '✅ Correct! Paying does not stop it — it proves you will pay. The demands always get bigger. Tell a trusted adult instead.';
+            feedback.className = 'kc-feedback show correct';
+
+            if (qNum === 1) {
+                kc1Done = true;
+                const wrap2 = document.getElementById('kc2-wrap');
+                wrap2.style.opacity = '1';
+                wrap2.style.pointerEvents = 'auto';
+            } else {
+                kc2Done = true;
+            }
+
+            if (kc1Done && kc2Done) {
+                document.getElementById('btn-next-8').disabled = false;
+            }
+        } else {
+            btn.classList.add('incorrect');
+            feedback.textContent = qNum === 1
+                ? '❌ Not quite. The biggest red flag is that they asked for photos before any job details. Try again.'
+                : '❌ Not quite. Paying actually makes it worse — it shows them you will pay, and they ask for more. Try again.';
+            feedback.className = 'kc-feedback show incorrect';
+            retry.classList.add('show');
+        }
+    }
+
+    function retryQuestion(qNum) {
+        const options = document.querySelectorAll('#kc' + qNum + '-options .kc-option');
+        options.forEach(o => {
+            o.disabled = false;
+            o.classList.remove('correct', 'incorrect');
+        });
+        document.getElementById('kc' + qNum + '-feedback').className = 'kc-feedback';
+        document.getElementById('kc' + qNum + '-retry').classList.remove('show');
+    }
+
+    function restartScenario() {
+        choiceMade = false;
+        kc1Done = false;
+        kc2Done = false;
+
+        // Reset decision
+        document.querySelectorAll('.choice-btn').forEach(b => {
+            b.disabled = false;
+            b.classList.remove('selected-danger','selected-warning','selected-safe','dimmed');
+        });
+        document.querySelectorAll('.outcome-panel').forEach(p => p.classList.remove('show'));
+        document.getElementById('btn-next-6').disabled = true;
+
+        // Reset KC
+        [1,2].forEach(q => {
+            document.querySelectorAll('#kc' + q + '-options .kc-option').forEach(o => {
+                o.disabled = false;
+                o.classList.remove('correct','incorrect');
+            });
+            document.getElementById('kc' + q + '-feedback').className = 'kc-feedback';
+            document.getElementById('kc' + q + '-retry').classList.remove('show');
+        });
+        document.getElementById('kc2-wrap').style.opacity = '0.4';
+        document.getElementById('kc2-wrap').style.pointerEvents = 'none';
+        document.getElementById('btn-next-8').disabled = true;
+
+        goTo(1);
+    }
+
+    updateProgress();
+</script>
+</body>
+</html>
